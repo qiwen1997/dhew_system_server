@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<input type="file">
+	<button id='btn'>btn</button>
+	<script src='./jquery-2.1.1.min.js'></script>
+	<script>
+		$('#btn').click(function(event) {
+			alert("请求");
+			// var formData = new FormData(),
+          	// name = $(this).val()
+          	// formData.append('file', $(this)[0].files[0])
+          	// 此处可传入多个参数
+          	// formData.append('name', name)
+	      $.ajax({
+	          // url: '/deviceinfoup/export',
+	          // type: 'post',
+	          // async: false,
+	          // data: formData,
+	          // // 告诉jQuery不要去处理发送的数据
+	          // processData: false,
+	          // // 告诉jQuery不要去设置Content-Type请求头
+	          // contentType: false,
+	          // beforeSend: function () {
+	          //     console.log('正在进行，请稍候')
+	          // },
+	          // success: function (res) {
+	          //     if (+res === '01') {
+	          //         console.log('导入成功')
+	          //     } else {
+	          //         console.log('导入失败')
+	          //     }
+	          //  }
+	          url: 'http://localhost:8080/Dhew_System_Server/UserInfoListServlet',
+	          type: 'get',
+	          //data: 'JSONP',
+	          success: function (res) {
+	          	alert(res);
+	          }
+	      })
+		});
+	</script>
+</body>
+</html>

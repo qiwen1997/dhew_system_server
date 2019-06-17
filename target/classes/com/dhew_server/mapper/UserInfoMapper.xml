@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhew_server.dao.UserInfoDao">
+	<select id="getAll" resultType="com.dhew_server.vo.UserInfoVo">
+		select user_id,user_phone,dp_id,user_name,user_sex,user_birth,user_height,user_weight,user_blood,user_realname from user_info
+	</select>
+	
+	<select id="getAllByDpid" resultType="com.dhew_server.vo.UserInfoVo">
+		select user_id,user_phone,dp_id,user_name,user_sex,user_birth,user_height,user_weight,user_blood,user_realname from user_info where dp_id=#{dp_id}
+	</select>
+	
+	<select id="getUserByPhone" resultType="com.dhew_server.vo.UserInfoVo">
+		select user_id,user_phone,dp_id,user_name,user_sex,user_birth,user_height,user_weight,user_blood,user_realname from user_info where user_phone=#{user_phone}
+	</select>
+	<!-- 改动 -->
+	<select id="getdpid" resultType="String">
+		select dp_id from user_info where user_phone=#{user_phone}
+	</select>
+	
+	<!-- 有改动 -->
+	<insert id="addUserInfo" parameterType="com.dhew_server.vo.UserInfoVo" useGeneratedKeys="true" keyProperty="user_id">
+		insert into user_info (user_id,user_phone,dp_id,user_name,user_sex,user_birth,user_height,user_weight,user_blood,user_realname) values(#{user_id},#{user_phone},#{dp_id},#{user_name},#{user_sex},#{user_birth},#{user_height},#{user_weight},#{user_blood},#{user_realname})
+	</insert>
+	
+	<delete id="deleteUserInfo" parameterType="String">
+		delete from user_info
+		<where>
+			user_phone in
+			<foreach collection="array" item="phone" open="(" separator="," close=")">
+			#{user_phone }
+			</foreach>
+		</where>
+	</delete>
+	
+	<update id="updateUserInfo" parameterType="com.dhew_server.vo.UserInfoVo">
+		update user_info set dp_id=#{dp_id},user_name=#{user_name},user_sex=#{user_sex},user_birth=#{user_birth},user_height=#{user_height},user_weight=#{user_weight},user_blood=#{user_blood},user_realname=#{user_realname} where user_phone=#{user_phone}
+	</update>
+	<!-- 新添加 -->
+	<update id="updateU" parameterType="com.dhew_server.vo.UserInfoVo" >
+		update user_info set user_name=#{user_name},user_sex=#{user_sex},user_birth=#{user_birth},user_height=#{user_height},user_weight=#{user_weight},user_blood=#{user_blood},user_realname=#{user_realname} where user_phone=#{user_phone}
+	</update>
+	<!-- 新添加 -->
+	<update id="updatedp_id"  >
+		update user_info set dp_id=#{dp_id} where user_phone=#{user_phone}
+	</update>
+	
+	<select id="getAllWithEme" resultType="map">
+		select user_id,u.user_phone,dp_id,user_name,user_sex,user_birth,
+		user_height,user_weight,user_blood,user_realname,eme.contact_name,eme.contact_phone,eme.default_phone
+		from user_info u inner join emergency_contact eme 
+		on u.user_phone = eme.user_phone where default_phone = 1
+	</select>
+	
+	<select id="getAllByDpidWithEme" resultType="map">
+		select user_id,u.user_phone,dp_id,user_name,user_sex,user_birth,
+		user_height,user_weight,user_blood,user_realname,eme.contact_name,eme.contact_phone,eme.default_phone
+		from user_info u inner join emergency_contact eme 
+		on u.user_phone = eme.user_phone where default_phone = 1 and dp_id=#{dp_id}
+	</select>
+	
+	<select id="countUser" resultType="int">
+		select count(*) from user_info where dp_id = #{dp_id}
+	</select>
+	
+	<resultMap type="UserInfoVo" id="userInfo">
+		<id column="user_id" property="user_id"/>
+		<result column="user_phone" property="user_phone"/>
+		<result column="dp_id" property="dp_id"/>
+		<result column="user_name" property="user_name"/>
+		<result column="user_sex" property="user_sex"/>
+		<result column="user_birth" property="user_birth"/>
+		<result column="user_height" property="user_height"/>
+		<result column="user_weight" property="user_weight"/>
+		<result column="user_blood" property="user_blood"/>
+		<result column="user_realname" property="user_realname"/>
+		<!-- 多对一的映射 -->
+		<association property="Emergency" javaType="EmergencyContactVo">
+			<id column="eme_id" property="eme_id"/>
+			<result column="contact_name" property="contact_name"/>
+			<result column="contact_phone" property="contact_phone"/>
+			<result column="default_phone" property="default_phone"/>
+		</association>
+	</resultMap>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhew_server.dao.CarDao">
+    
+	<select id="getContactByPhone" resultType="com.dhew_server.vo.CarVo">
+		select car_id,user_phone,brand,plate,type,default_phone from user_car where user_phone=#{user_phone}
+	</select>
+	<insert id="addContact" parameterType="com.dhew_server.vo.CarVo" useGeneratedKeys="true" keyProperty="car_id">
+		insert into user_car (car_id,user_phone,brand,plate,type,default_phone) values(null,#{user_phone},#{brand},#{plate},#{type},#{default_phone})
+	</insert>
+	<delete id="deleteContact">
+		delete from user_car where car_id=#{car_id}
+	</delete>
+	
+	<update id="updateContact" parameterType="com.dhew_server.vo.CarVo">
+		update user_car set brand=#{brand},plate=#{plate},type=#{type} where car_id=#{car_id}
+	</update>
+	
+	<update id="updatechange" parameterType="com.dhew_server.vo.EmergencyContactVo">
+		update user_car set brand=#{brand},plate=#{plate},type=#{type},default_phone=#{default_phone} where car_id=#{car_id}
+	</update>
+	<update id="updateall" parameterType="String">
+		update user_car set default_phone=0 where user_phone=#{user_phone}
+	</update>
+</mapper>

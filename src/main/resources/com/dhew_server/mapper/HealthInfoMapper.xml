@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhew_server.dao.HealthInfoDao">
+	<update id="createDatebaseByDbphone" parameterType="String">
+		CREATE TABLE ${db_phone} (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `health_time` datetime NOT NULL,
+  `heart` varchar(10) DEFAULT NULL,
+  `body_temperature` varchar(10) DEFAULT NULL,
+  `room_temperature` varchar(10) DEFAULT NULL,
+  `humidity` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="deleteDatebaseByDbphone">  
+        DROP TABLE IF EXISTS ${db_phone} 
+    </update>
+	
+	<update id="updateDatebaseByDbphone">
+		ALTER TABLE ${old_db_phone} RENAME TO ${new_db_phone}
+	</update>
+	
+	<select id="getAll" resultType="com.dhew_server.vo.HealthInfoVo" parameterType="String">
+		select id,health_time,heart,body_temperature,room_temperature,humidity from ${db_phone} order by id desc
+	</select>
+	
+	<select id="getByTime" resultType="com.dhew_server.vo.HealthInfoVo" parameterType="String">
+		select id,health_time,heart,body_temperature,room_temperature,humidity from ${db_phone} where health_time between '${start_time}' and '${end_time}' order by id desc
+	</select>
+	
+	<select id="getByDay" resultType="com.dhew_server.vo.HealthInfoVo" parameterType="String">
+		select id,health_time,AVG(heart) as heart,AVG(body_temperature) as body_temperature,AVG(room_temperature) as room_temperature,AVG(humidity) as humidity from ${db_phone} where DATEDIFF(health_time,NOW()) = #{day}
+	</select>
+	
+
+	
+	
+	<select id="getHalfHourByDay" resultType="map" parameterType="String">
+		SELECT id,time AS health_time,AVG(heart) as heart,AVG(body_temperature) as body_temperature,AVG(room_temperature) as room_temperature,AVG(humidity) as humidity
+		FROM
+			(
+			SELECT *,
+				DATE_FORMAT(
+					concat( date( health_time ), ' ', HOUR ( health_time ), ':', floor( MINUTE ( health_time ) / 30 ) * 30 ),
+					'%Y-%m-%d %H:%i' 
+				) AS time 
+			FROM ${db_phone} WHERE DATE_FORMAT(health_time,'%Y-%m-%d') = #{date}
+			) a 
+		GROUP BY DATE_FORMAT( time, '%Y-%m-%d %H:%i' ) 
+		ORDER BY time;
+
+	</select>
+	
+	<insert id="addHealth" parameterType="com.dhew_server.vo.HealthInfoVo">
+		insert into ${db_phone} (id,health_time,heart,body_temperature,room_temperature,humidity) values(null,#{health.health_time},#{health.heart},#{health.body_temperature},#{health.room_temperature},#{health.humidity})
+	</insert>
+	
+	<delete id="deleteHealthById" parameterType="Integer">
+		delete from ${db_phone}
+		<where>
+			id in
+			<foreach collection="array" item="i" open="(" separator="," close=")">
+			#{i }
+			</foreach>
+		</where>
+	</delete>
+	
+	<delete id="deleteHealthByTime" parameterType="String">
+		delete from ${db_phone} where health_time between '${start_time}' and '${end_time}'
+	</delete>
+	
+	<select id="getDefaultHeart" resultType="String" parameterType="String">
+		select AVG(heart) as heart from ${db_phone} where DATE_SUB(CURDATE(), INTERVAL 7 DAY) <![CDATA[ <= ]]> DATE(health_time)
+	</select>
+	
+	<resultMap type="HealthInfoVo" id="healthInfo">
+		<id column="id" property="id"/>
+		<result column="health_time" property="health_time"/>
+		<result column="heart" property="heart"/>
+		<result column="body_temperature" property="body_temperature"/>
+		<result column="room_temperature" property="room_temperature"/>
+		<result column="humidity" property="humidity"/>
+	</resultMap>
+</mapper>

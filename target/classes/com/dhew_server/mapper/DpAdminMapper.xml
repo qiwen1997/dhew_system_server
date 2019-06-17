@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhew_server.dao.DpAdminDao">
+	<select id="getAll" resultType="com.dhew_server.vo.DpAdminVo">
+		select admin_id,dp_id,dp_user,dp_password,super_admin from dp_admin
+	</select>
+	<select id="getAllByDpid" resultType="map">
+		select admin_id,a.dp_id,dp_user,super_admin,admin_name,admin_sex,admin_phone,admin_remark,i.dp_name 
+		from dp_admin a inner join dp_info i
+		where a.dp_id = i.dp_id and a.dp_id=#{dp_id}
+	</select>
+	<select id="getAdmin" resultType="com.dhew_server.vo.DpAdminVo">
+		select admin_id,dp_id,dp_user,dp_password,super_admin from dp_admin where dp_user=#{dp_user} and dp_password=md5(#{dp_password})
+	</select>
+	
+	<insert id="addAdmin" parameterType="com.dhew_server.vo.DpAdminVo">
+		insert into dp_admin (admin_id,dp_id,dp_user,dp_password,admin_name,admin_sex,admin_phone,super_admin,admin_remark) 
+		values(null,#{dp_id},#{dp_user},md5(#{dp_password}),#{admin_name},#{admin_sex},#{admin_phone},#{super_admin},#{admin_remark})
+	</insert>
+	
+	<delete id="deleteAdmin" parameterType="Integer">
+		delete from dp_admin 
+		<where>
+			admin_id in
+			<foreach collection="array" item="admin" open="(" separator="," close=")">
+			#{admin }
+			</foreach>
+		</where>
+	</delete>
+	
+	<update id="updateAdmin" parameterType="com.dhew_server.vo.DpAdminVo">
+		update dp_admin set dp_id=#{dp_id},dp_password=md5(#{dp_password},super_admin=#{super_admin}) where dp_user=#{dp_user}
+	</update>
+	
+	<select id="countAdmin" resultType="int">
+		select count(*) from dp_admin where dp_id = #{dp_id}
+	</select>
+	
+	<select id="getAdminByUser" resultType="com.dhew_server.vo.DpAdminVo">
+		select admin_id,dp_id,dp_user,dp_password,super_admin from dp_admin where dp_user=#{dp_user}
+	</select>
+	
+	<resultMap type="DpAdminVo" id="dpAdmin">
+		<id column="admin_id" property="user_id"/>
+		<result column="dp_id" property="user_phone"/>
+		<result column="dp_user" property="dp_id"/>
+		<result column="super_admin" property="user_name"/>
+		<result column="admin_name" property="user_sex"/>
+		<result column="admin_sex" property="user_birth"/>
+		<result column="admin_phone" property="user_height"/>
+		<result column="admin_remark" property="user_weight"/>
+		<!-- 多对一的映射 -->
+		<association property="DpInfo" javaType="DpInfoVo">
+			<id column="dp_id" property="eme_id"/>
+			<result column="dp_name" property="contact_name"/>
+		</association>
+	</resultMap>
+</mapper>

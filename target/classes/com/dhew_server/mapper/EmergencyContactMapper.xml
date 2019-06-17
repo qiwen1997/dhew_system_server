@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhew_server.dao.EmergencyContactDao">
+	<select id="getAll" resultType="com.dhew_server.vo.EmergencyContactVo">
+		select eme_id,user_phone,contact_name,contact_phone,default_phone from emergency_contact
+	</select>
+	
+	<select id="getContactByPhone" resultType="com.dhew_server.vo.EmergencyContactVo">
+		select eme_id,user_phone,contact_name,contact_phone,default_phone from emergency_contact where user_phone=#{user_phone}
+	</select>
+	
+	<select id="getDefaultContactByPhone" resultType="com.dhew_server.vo.EmergencyContactVo">
+		select eme_id,user_phone,contact_name,contact_phone,default_phone from emergency_contact where user_phone=#{user_phone} and default_phone=1;
+	</select>
+	
+	<select id="getContactById" resultType="com.dhew_server.vo.EmergencyContactVo">
+		select eme_id,user_phone,contact_name,contact_phone,default_phone from emergency_contact where eme_id=#{eme_id}
+	</select>
+	
+	<!-- 有改动 -->
+	<insert id="addContact" parameterType="com.dhew_server.vo.EmergencyContactVo" useGeneratedKeys="true" keyProperty="eme_id">
+		insert into emergency_contact (eme_id,user_phone,contact_name,contact_phone,default_phone) values(null,#{user_phone},#{contact_name},#{contact_phone},#{default_phone})
+	</insert>
+	
+	<delete id="deleteContact">
+		delete from emergency_contact where user_phone=#{user_phone} and contact_phone=#{contact_phone}
+	</delete>
+	
+	<!-- 有改动 -->
+	<update id="updateContact" parameterType="com.dhew_server.vo.EmergencyContactVo">
+		update emergency_contact set contact_name=#{contact_name},contact_phone=#{contact_phone} where eme_id=#{eme_id}
+	</update>
+	<update id="updatechange" parameterType="com.dhew_server.vo.EmergencyContactVo">
+		update emergency_contact set contact_name=#{contact_name},contact_phone=#{contact_phone},default_phone=#{default_phone} where eme_id=#{eme_id}
+	</update>
+	<update id="updateall" parameterType="String">
+		update emergency_contact set default_phone=0 where user_phone=#{user_phone}
+	</update>
+</mapper>

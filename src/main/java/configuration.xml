@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties resource="com/dhew_server/config/config.properties">
+	</properties>
+	<settings>
+		<!-- 配置日志组件的类型; -->
+		<setting name="logImpl" value="LOG4J"/>
+		<setting name="useGeneratedKeys" value="true"/>
+	</settings>
+	<typeAliases>
+		<package name="com.dhew_server.vo"/>
+	</typeAliases>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="poolMaximumActiveConnections" value="10"/>
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://47.95.212.214/zncz_db" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="com/dhew_server/mapper/DpAdminMapper.xml" />
+		<mapper resource="com/dhew_server/mapper/DpInfoMapper.xml" />
+		<mapper resource="com/dhew_server/mapper/EmergencyContactMapper.xml" />
+		<mapper resource="com/dhew_server/mapper/UserInfoMapper.xml" />
+		<mapper resource="com/dhew_server/mapper/UserLoginMapper.xml" />
+		<mapper resource="com/dhew_server/mapper/WarnInfoMapper.xml" />
+		<mapper resource="com/dhew_server/mapper/HealthInfoMapper.xml" />
+		<mapper resource="com/dhew_server/mapper/CarMapper.xml" />
+		<!-- <package name="com.dhew_server.dao"/> -->
+	</mappers>
+</configuration>

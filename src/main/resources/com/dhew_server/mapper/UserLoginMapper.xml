@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhew_server.dao.UserLoginDao">
+	<select id="getAll" resultType="com.dhew_server.vo.UserLoginVo">
+		select user_id,user_phone,user_password from user_login
+	</select>
+	
+	<select id="getUser" resultType="com.dhew_server.vo.UserLoginVo">
+		select user_id,user_phone,user_password from user_login where user_phone=#{user_phone} and user_password=md5(#{user_password})
+	</select>
+	
+	<!-- 有改动 -->
+	<insert id="addUser" parameterType="com.dhew_server.vo.UserLoginVo" useGeneratedKeys="true" keyProperty="user_id">
+		insert into user_login (user_id,user_phone,user_password) values(null,#{user_phone},md5(#{user_password}))
+	</insert>
+	
+	<delete id="deleteUser" parameterType="String">
+		delete from user_login 
+		<where>
+			user_phone in
+			<foreach collection="array" item="phone" open="(" separator="," close=")">
+			#{phone }
+			</foreach>
+		</where>
+	</delete>
+	
+	<update id="updateUser" parameterType="com.dhew_server.vo.UserLoginVo">
+		update user_login set user_phone=#{user_phone},user_password=md5(#{user_password}) where user_id=#{user_id}
+	</update>
+</mapper>
